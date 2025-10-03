@@ -13,14 +13,14 @@ if CLIENT then
 			}
 			
 			BuuBaseSettings.Options["#Default"] = {	
-				cl_buu_crosshairhealth = "0",
-				cl_buu_crosshairstyle =	"1",
-				cl_buu_crosshairred =	"255",
+				cl_buu_crosshairhealth = "2",
+				cl_buu_crosshairstyle =	"4",
+				cl_buu_crosshairred = "255",
 				cl_buu_crosshairgreen =	"255",
 				cl_buu_crosshairblue =	"255",
 				cl_buu_crosshairalpha =	"255",
 				cl_buu_ironsightrolling = "1",
-				cl_buu_barrelsmoke=	"1",
+				cl_buu_barrelsmoke = "1",
 				cl_buu_customjump =	"1",
 				cl_buu_custombob =	"1",
 				cl_buu_customsway =	"1",
@@ -34,19 +34,22 @@ if CLIENT then
 				cl_buu_thirdpersonlight = "1"
 			}
 
-			panel:AddControl("ComboBox", BuuBaseSettings)
+			panel:AddControl( "ComboBox", BuuBaseSettings )
 			
-			panel:AddControl("CheckBox", {
-				Label = "Crosshair shows health",
+			panel:AddControl( "Slider", {
+				Label = "Crosshair Health",
 				Command = "cl_buu_crosshairhealth",
-			})
+				Type = "Integer",
+				Min = "0",
+				Max = "2",
+			} )
 			
 			panel:AddControl("Slider", {
-				Label 	= "Crosshair Style",
-				Command 	= "cl_buu_crosshairstyle",
-				Type 		= "Integer",
-				Min 		= "0",
-				Max 		= "4",
+				Label = "Crosshair Style",
+				Command = "cl_buu_crosshairstyle",
+				Type = "Integer",
+				Min = "0",
+				Max = "4",
 			})
 			
 			panel:AddControl("Slider", {

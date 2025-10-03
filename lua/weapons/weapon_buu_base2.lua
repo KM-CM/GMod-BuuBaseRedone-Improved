@@ -1945,7 +1945,7 @@ end
 
 function SWEP:FireAnimationEvent(pos, ang, event)
 	-- Don't draw thirdperson effects in multiplayer (because they don't work)
-	if (self.Owner:IsPlayer() && self.Owner:ShouldDrawLocalPlayer() && !game.SinglePlayer() && (event == 21 || event == 22 || event == 6001)) then
+	if (self.Owner:IsPlayer() && Either( CLIENT, CLIENT && self.Owner:ShouldDrawLocalPlayer(), true ) && !game.SinglePlayer() && (event == 21 || event == 22 || event == 6001)) then
 		return true
 	end
 	
@@ -2950,7 +2950,7 @@ if (CLIENT) then
 	local lastfirehud = 0
 	function SWEP:DrawHUD()
 	
-		-- Draw the sniper scope in using it, or the crosshair if not
+		-- Draw the sniper scope when using it, the crosshair if not
 		if (self:IsScoped()) then
 		
 			-- Draw extra stuff first
@@ -2961,7 +2961,7 @@ if (CLIENT) then
 			surface.SetTexture(surface.GetTextureID(self.SniperTexture))
 			surface.DrawTexturedRect(self.LensTable.x, self.LensTable.y, self.LensTable.w, self.LensTable.h)
 
-			-- Fill in everything else with a black as dark as my heart
+			-- Fill in everything else with black as dark as my heart
 			surface.SetDrawColor(0, 0, 0, 255)
 			surface.DrawRect(self.QuadTable.x1 - 2.5, self.QuadTable.y1 - 2.5, self.QuadTable.w1 + 5, self.QuadTable.h1 + 5)
 			surface.DrawRect(self.QuadTable.x2 - 2.5, self.QuadTable.y2 - 2.5, self.QuadTable.w2 + 5, self.QuadTable.h2 + 5)
@@ -3005,28 +3005,36 @@ if (CLIENT) then
 					finalgap = Lerp(1, finalgap, (movementgap*self.CrosshairMove+scale*10+togap)*self.CrosshairGap)
 				end
 				
+				local tr = util.GetPlayerTrace( self.Owner )
+				tr.mask = CONTENTS_SOLID + CONTENTS_MOVEABLE + CONTENTS_MONSTER + CONTENTS_WINDOW + CONTENTS_DEBRIS + CONTENTS_GRATE + CONTENTS_AUX
+				tr = util.TraceLine( tr )
 				-- Set the crosshair X+Y where the player is looking in thirdperson, or the center of the screen in first person
 				if (self.Owner == LocalPlayer() && self.Owner:ShouldDrawLocalPlayer()) then
-					local tr = util.GetPlayerTrace(self.Owner)
-					tr.mask = (CONTENTS_SOLID+CONTENTS_MOVEABLE+CONTENTS_MONSTER+CONTENTS_WINDOW+CONTENTS_DEBRIS+CONTENTS_GRATE+CONTENTS_AUX)
-					local trace = util.TraceLine(tr)
-					local coords = trace.HitPos:ToScreen()
+					local coords = tr.HitPos:ToScreen()
 					x, y = coords.x, coords.y
 				else
-					x, y = ScrW()/2, ScrH()/2
+					x, y = ScrW() * .5, ScrH() * .5
 				end
 				
+				local c = GetConVar( "cl_buu_crosshairhealth" ):GetInt()
 				-- Set the crosshair color
-				if (GetConVar("cl_buu_crosshairhealth"):GetInt() == 0) then
-					r = GetConVar("cl_buu_crosshairred"):GetInt()
-					g = GetConVar("cl_buu_crosshairgreen"):GetInt()
-					b = GetConVar("cl_buu_crosshairblue"):GetInt()
+				if c == 0 || c != 1 && !IsValid( tr.Entity ) then
+					r = GetConVar( "cl_buu_crosshairred" ):GetInt()
+					g = GetConVar( "cl_buu_crosshairgreen" ):GetInt()
+					b = GetConVar( "cl_buu_crosshairblue" ):GetInt()
 				else
-					local hp = LocalPlayer():Health()
-					local maxhp = LocalPlayer():GetMaxHealth()
-					r = math.Clamp(255*2-(hp*2/maxhp)*255, 0, 255)
-					g = math.Clamp((hp*2/maxhp)*255, 0, 255)
-					b = 0
+					local p = c == 1 && LocalPlayer() || tr.Entity
+					local hp = p:Health()
+					local maxhp = p:GetMaxHealth()
+					if hp <= 0 || maxhp <= 0 then
+						r = GetConVar( "cl_buu_crosshairred" ):GetInt()
+						g = GetConVar( "cl_buu_crosshairgreen" ):GetInt()
+						b = GetConVar( "cl_buu_crosshairblue" ):GetInt()
+					else
+						r = math.Clamp(255*2-(hp*2/maxhp)*255, 0, 255)
+						g = math.Clamp((hp*2/maxhp)*255, 0, 255)
+						b = 0
+					end
 				end
 				surface.SetDrawColor(r, g, b, GetConVar("cl_buu_crosshairalpha"):GetInt())
 				
