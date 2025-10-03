@@ -29,9 +29,9 @@ if CLIENT then
 				cl_buu_ironsensitivity = "0.7",
 				cl_buu_scopesensitivity = "0.3",
 				cl_buu_lowammowarn = "1",
-                cl_buu_slidetilt = "1",
-                cl_buu_thirdpersonlaser = "1",
-                cl_buu_thirdpersonlight = "1"
+				cl_buu_slidetilt = "1",
+				cl_buu_thirdpersonlaser = "1",
+				cl_buu_thirdpersonlight = "1"
 			}
 
 			panel:AddControl("ComboBox", BuuBaseSettings)
@@ -107,30 +107,30 @@ if CLIENT then
 				Label = "Custom Sway",
 				Command = "cl_buu_customsway",
 			})
-            
-            panel:AddControl("CheckBox", {
+			
+			panel:AddControl("CheckBox", {
 				Label = "Thirdperson Lasers",
 				Command = "cl_buu_thirdpersonlaser",
 			})
-            
-            panel:AddControl("CheckBox", {
+			
+			panel:AddControl("CheckBox", {
 				Label = "Thirdperson Light",
 				Command = "cl_buu_thirdpersonlight",
 			})
-        
-            panel:AddControl("CheckBox", {
+		
+			panel:AddControl("CheckBox", {
 				Label = "Mag dropping",
 				Command = "cl_buu_magdrop",
 			})
-            
-            panel:AddControl("Slider", {
+			
+			panel:AddControl("Slider", {
 				Label 	= "Dropped mags lifetime",
 				Command 	= "cl_buu_magdroplifetime",
 				Type 		= "Integer",
 				Min 		= "1",
 				Max 		= "10000",
 			})
-            
+			
 			panel:AddControl("Label", {Text = ""})
 			
 			panel:AddControl("Slider", {
@@ -155,8 +155,8 @@ if CLIENT then
 				Label = "Guns click on low ammo",
 				Command = "cl_buu_lowammowarn",
 			})
-            
-            panel:AddControl("CheckBox", {
+			
+			panel:AddControl("CheckBox", {
 				Label = "Tilt screen when sliding",
 				Command = "cl_buu_slidetilt",
 			})
@@ -185,9 +185,9 @@ if CLIENT then
 				sv_buu_ironsightsway = "1",
 				sv_buu_shotgunwreckdoors = "1",
 				sv_buu_sniperbreath = "1",
-                sv_buu_canslide = "1",
-                sv_buu_slidedamage = "1",
-                sv_buu_slideshoot = "1",
+				sv_buu_canslide = "1",
+				sv_buu_slidedamage = "1",
+				sv_buu_slideshoot = "1",
 				sv_buu_customflashlight = "1",
 				sv_buu_bulletpenetration = "1",
 			}
@@ -213,8 +213,8 @@ if CLIENT then
 				Label = "Enable near-wall",
 				Command = "sv_buu_nearwall",
 			})
-            
-            panel:AddControl("CheckBox", {
+			
+			panel:AddControl("CheckBox", {
 				Label = "Disable shooting while on ladder",
 				Command = "sv_buu_ladder",
 			})
@@ -240,24 +240,24 @@ if CLIENT then
 				Label = "Snipers can hold breath",
 				Command = "sv_buu_sniperbreath",
 			})
-            panel:AddControl("CheckBox", {
+			panel:AddControl("CheckBox", {
 				Label = "Allow bullet penetration",
 				Command = "sv_buu_bulletpenetration",
 			})
 			
 			panel:AddControl("Label", {Text = ""})
-            
-            panel:AddControl("CheckBox", {
+			
+			panel:AddControl("CheckBox", {
 				Label = "Allow sliding",
 				Command = "sv_buu_canslide",
 			})
-            
-            panel:AddControl("CheckBox", {
+			
+			panel:AddControl("CheckBox", {
 				Label = "Sliding damage",
 				Command = "sv_buu_slidedamage",
 			})
-            
-            panel:AddControl("CheckBox", {
+			
+			panel:AddControl("CheckBox", {
 				Label = "Shoot while Sliding",
 				Command = "sv_buu_slideshoot",
 			})
@@ -277,79 +277,79 @@ end
 ===============================================================*/
 
 if !ConVarExists("cl_buu_crosshairhealth") then
-    CreateClientConVar("cl_buu_crosshairhealth", '0', FCVAR_ARCHIVE)
+	CreateClientConVar("cl_buu_crosshairhealth", '0', FCVAR_ARCHIVE)
 end
 
 if !ConVarExists("cl_buu_crosshairstyle") then
-    CreateClientConVar("cl_buu_crosshairstyle", '1', FCVAR_ARCHIVE)
+	CreateClientConVar("cl_buu_crosshairstyle", '1', FCVAR_ARCHIVE)
 end
 
 if !ConVarExists("cl_buu_crosshairred") then
-    CreateClientConVar("cl_buu_crosshairred", '255', FCVAR_ARCHIVE)
+	CreateClientConVar("cl_buu_crosshairred", '255', FCVAR_ARCHIVE)
 end
 
 if !ConVarExists("cl_buu_crosshairgreen") then
-    CreateClientConVar("cl_buu_crosshairgreen", '255', FCVAR_ARCHIVE)
+	CreateClientConVar("cl_buu_crosshairgreen", '255', FCVAR_ARCHIVE)
 end
 
 if !ConVarExists("cl_buu_crosshairblue") then
-    CreateClientConVar("cl_buu_crosshairblue", '255', FCVAR_ARCHIVE)
+	CreateClientConVar("cl_buu_crosshairblue", '255', FCVAR_ARCHIVE)
 end
 
 if !ConVarExists("cl_buu_crosshairalpha") then
-    CreateClientConVar("cl_buu_crosshairalpha", '255', FCVAR_ARCHIVE)
+	CreateClientConVar("cl_buu_crosshairalpha", '255', FCVAR_ARCHIVE)
 end
 
 if !ConVarExists("cl_buu_barrelsmoke") then
-    CreateClientConVar("cl_buu_barrelsmoke", '1', FCVAR_ARCHIVE)
+	CreateClientConVar("cl_buu_barrelsmoke", '1', FCVAR_ARCHIVE)
 end
 
 if !ConVarExists("cl_buu_ironsightrolling") then
-    CreateClientConVar("cl_buu_ironsightrolling", '1', FCVAR_ARCHIVE)
+	CreateClientConVar("cl_buu_ironsightrolling", '1', FCVAR_ARCHIVE)
 end
 
 if !ConVarExists("cl_buu_customjump") then
-    CreateClientConVar("cl_buu_customjump", '1', FCVAR_ARCHIVE)
+	CreateClientConVar("cl_buu_customjump", '1', FCVAR_ARCHIVE)
 end
 
 if !ConVarExists("cl_buu_custombob") then
-    CreateClientConVar("cl_buu_custombob", '1', FCVAR_ARCHIVE)
+	CreateClientConVar("cl_buu_custombob", '1', FCVAR_ARCHIVE)
 end
 
 if !ConVarExists("cl_buu_customsway") then
-    CreateClientConVar("cl_buu_customsway", '1', FCVAR_ARCHIVE)
+	CreateClientConVar("cl_buu_customsway", '1', FCVAR_ARCHIVE)
 end
 
 if !ConVarExists("cl_buu_ironsensitivity") then
-    CreateClientConVar("cl_buu_ironsensitivity", '0.7', FCVAR_ARCHIVE)
+	CreateClientConVar("cl_buu_ironsensitivity", '0.7', FCVAR_ARCHIVE)
 end
 
 if !ConVarExists("cl_buu_scopesensitivity") then
-    CreateClientConVar("cl_buu_scopesensitivity", '0.3', FCVAR_ARCHIVE)
+	CreateClientConVar("cl_buu_scopesensitivity", '0.3', FCVAR_ARCHIVE)
 end
 
 if !ConVarExists("cl_buu_lowammowarn") then
-    CreateClientConVar("cl_buu_lowammowarn", '255', FCVAR_ARCHIVE)
+	CreateClientConVar("cl_buu_lowammowarn", '255', FCVAR_ARCHIVE)
 end
 
 if !ConVarExists("cl_buu_slidetilt") then
-    CreateClientConVar("cl_buu_slidetilt", '1', FCVAR_ARCHIVE)
+	CreateClientConVar("cl_buu_slidetilt", '1', FCVAR_ARCHIVE)
 end
 
 if !ConVarExists("cl_buu_thirdpersonlaser") then
-    CreateClientConVar("cl_buu_thirdpersonlaser", '1', FCVAR_ARCHIVE)
+	CreateClientConVar("cl_buu_thirdpersonlaser", '1', FCVAR_ARCHIVE)
 end
 
 if !ConVarExists("cl_buu_thirdpersonlight") then
-    CreateClientConVar("cl_buu_thirdpersonlight", '1', FCVAR_ARCHIVE)
+	CreateClientConVar("cl_buu_thirdpersonlight", '1', FCVAR_ARCHIVE)
 end
 
 if !ConVarExists("cl_buu_magdrop") then
-    CreateClientConVar("cl_buu_magdrop", '1', FCVAR_ARCHIVE)
+	CreateClientConVar("cl_buu_magdrop", '1', FCVAR_ARCHIVE)
 end
 
 if !ConVarExists("cl_buu_magdroplifetime") then
-    CreateClientConVar("cl_buu_magdroplifetime", '10', FCVAR_ARCHIVE)
+	CreateClientConVar("cl_buu_magdroplifetime", '10', FCVAR_ARCHIVE)
 end
 
 /*===============================================================
@@ -357,53 +357,53 @@ end
 ===============================================================*/
 
 if !ConVarExists("sv_buu_ironsights") then
-    CreateConVar("sv_buu_ironsights", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
+	CreateConVar("sv_buu_ironsights", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
 end
 
 if !ConVarExists("sv_buu_crosshair") then
-    CreateConVar("sv_buu_crosshair", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
+	CreateConVar("sv_buu_crosshair", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
 end
 
 if !ConVarExists("sv_buu_sprinting") then
-    CreateConVar("sv_buu_sprinting", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
+	CreateConVar("sv_buu_sprinting", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
 end
 
 if !ConVarExists("sv_buu_nearwall") then
-    CreateConVar("sv_buu_nearwall", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
+	CreateConVar("sv_buu_nearwall", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
 end
 
 if !ConVarExists("sv_buu_ladder") then
-    CreateConVar("sv_buu_ladder", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
+	CreateConVar("sv_buu_ladder", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
 end
 
 if !ConVarExists("sv_buu_ironsightsway") then
-    CreateConVar("sv_buu_ironsightsway", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
+	CreateConVar("sv_buu_ironsightsway", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
 end
 
 if !ConVarExists("sv_buu_shotgunwreckdoors") then
-    CreateConVar("sv_buu_shotgunwreckdoors", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
+	CreateConVar("sv_buu_shotgunwreckdoors", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
 end
 
 if !ConVarExists("sv_buu_sniperbreath") then
-    CreateConVar("sv_buu_sniperbreath", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
+	CreateConVar("sv_buu_sniperbreath", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
 end
 
 if !ConVarExists("sv_buu_canslide") then
-    CreateConVar("sv_buu_canslide", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
+	CreateConVar("sv_buu_canslide", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
 end
 
 if !ConVarExists("sv_buu_slidedamage") then
-    CreateConVar("sv_buu_slidedamage", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
+	CreateConVar("sv_buu_slidedamage", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
 end
 
 if !ConVarExists("sv_buu_slideshoot") then
-    CreateConVar("sv_buu_slideshoot", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
+	CreateConVar("sv_buu_slideshoot", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
 end
 
 if !ConVarExists("sv_buu_customflashlight") then
-    CreateClientConVar("sv_buu_customflashlight", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
+	CreateClientConVar("sv_buu_customflashlight", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
 end
 
 if !ConVarExists("sv_buu_bulletpenetration") then
-    CreateConVar("sv_buu_bulletpenetration", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
+	CreateConVar("sv_buu_bulletpenetration", '1', FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
 end
