@@ -915,7 +915,7 @@ function SWEP:ShootCode(mode)
 	local bullet	  = {}
 	bullet.Num		= numbul
 	bullet.Src		= self.Owner:GetShootPos()
-	bullet.Dir		= (self.Owner:EyeAngles() + viewp + Angle(math.Rand(-cone, cone), math.Rand(-cone, cone), 0)*33):Forward()
+	bullet.Dir		= (self.Owner:EyeAngles() + viewp):Forward()
 	bullet.Spread	 = Vector(cone, cone, 0)
 	bullet.Tracer	 = 1
 	bullet.TracerName = mode.Tracer or "nil"
@@ -3137,3 +3137,4 @@ if (CLIENT) then
 	end
 	hook.Add("PlayerFireAnimationEvent", "Buu_StopThirdpersonSounds", Buu_StopThirdpersonSounds)
 end
+
