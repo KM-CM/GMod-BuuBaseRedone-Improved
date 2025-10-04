@@ -1054,15 +1054,13 @@ function SWEP:ShootProjectile(mode)
 			ent:Spawn()
 			
 			-- Enable physics and give it some force
-			local phys = ent:GetPhysicsObject()
-			if IsValid(phys)then 
-				local velocity = self.Owner:EyeAngles() + Angle(math.Rand(-cone, cone), math.Rand(-cone, cone), 0)*33
-				if (self.Owner:IsPlayer()) then
-				   velocity = velocity + self.Owner:GetViewPunchAngles()
-				end
-				velocity = (velocity:Forward())*ent.Force
-				phys:ApplyForceCenter(velocity)
+			local velocity = self.Owner:EyeAngles() + Angle(math.Rand(-cone, cone), math.Rand(-cone, cone), 0)*33
+			if (self.Owner:IsPlayer()) then
+			   velocity = velocity + self.Owner:GetViewPunchAngles()
 			end
+			velocity = ( velocity:Forward() ) * ent.Force
+			local phys = ent:GetPhysicsObject()
+			if IsValid( phys ) then phys:ApplyForceCenter( velocity ) else ent:SetVelocity( velocity ) end
 		end
 	end
 end
@@ -3137,4 +3135,4 @@ if (CLIENT) then
 	end
 	hook.Add("PlayerFireAnimationEvent", "Buu_StopThirdpersonSounds", Buu_StopThirdpersonSounds)
 end
-
+																					
