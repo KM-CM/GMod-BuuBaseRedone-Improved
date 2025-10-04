@@ -2957,117 +2957,121 @@ if (CLIENT) then
 			
 			-- Draw extra stuff after
 			self:PostDrawScope()
-		elseif (GetConVar("sv_buu_crosshair"):GetInt() == 1 && !self:GetBuu_Ironsights() && !self:GetBuu_NearWall() && !self:GetBuu_Sprinting() && !self:GetBuu_OnLadder() && !self:GetBuu_Reloading()) then
-			self.DrawCrosshair = false
-			if (self.CrosshairType == 0) then return end
-			
-			-- Pick the Crosshair
-			local mode = self:GetFireModeTable()
-			if (GetConVar("cl_buu_crosshairstyle"):GetInt() == 1) then
-			
-				-- Enable HL2 Croshair
-				self.DrawCrosshair = true
-			else
-				local x, y
-				local r, g, b
-				local scale = 1
-				local movementgap = math.Clamp(LocalPlayer():GetVelocity():Length()/300, 0, 1.5)
+		else
+			// If developing, always draw the normal crosshair, unless a sniper. Used for finding ironsighted viewmodel positions
+			if GetConVar( "developer" ):GetBool() then self.DrawCrosshair = true return end
+			if (GetConVar("sv_buu_crosshair"):GetInt() == 1 && !self:GetBuu_Ironsights() && !self:GetBuu_NearWall() && !self:GetBuu_Sprinting() && !self:GetBuu_OnLadder() && !self:GetBuu_Reloading()) then
+				self.DrawCrosshair = false
+				if (self.CrosshairType == 0) then return end
 				
-				-- Calculate crosshair scale and gap
-				if (GetConVar("cl_buu_crosshairstyle"):GetInt() == 2) then
-					scale = 16
+				-- Pick the Crosshair
+				local mode = self:GetFireModeTable()
+				if (GetConVar("cl_buu_crosshairstyle"):GetInt() == 1) then
+				
+					-- Enable HL2 Croshair
+					self.DrawCrosshair = true
 				else
-					if (lastfirehud != self:GetBuu_FireTime()) then
-						togap = togap + 10+mode.Recoil*self.CrosshairRecoil
-						lastfirehud = self:GetBuu_FireTime()
+					local x, y
+					local r, g, b
+					local scale = 1
+					local movementgap = math.Clamp(LocalPlayer():GetVelocity():Length()/300, 0, 1.5)
+					
+					-- Calculate crosshair scale and gap
+					if (GetConVar("cl_buu_crosshairstyle"):GetInt() == 2) then
+						scale = 16
+					else
+						if (lastfirehud != self:GetBuu_FireTime()) then
+							togap = togap + 10+mode.Recoil*self.CrosshairRecoil
+							lastfirehud = self:GetBuu_FireTime()
+						end
+						togap = Lerp(0.04, togap, 0)
 					end
-					togap = Lerp(0.04, togap, 0)
-				end
-				if (self.Sniper) then
-					scale = scale/2
-				end
-				if (!IsValidVariable(self.CrosshairGap)) then
-					finalgap = Lerp(1, finalgap, movementgap*self.CrosshairMove+scale*40+togap+mode.Recoil*15)
-				else
-					finalgap = Lerp(1, finalgap, (movementgap*self.CrosshairMove+scale*10+togap)*self.CrosshairGap)
-				end
-				
-				local tr = util.GetPlayerTrace( self.Owner )
-				tr.mask = CONTENTS_SOLID + CONTENTS_MOVEABLE + CONTENTS_MONSTER + CONTENTS_WINDOW + CONTENTS_DEBRIS + CONTENTS_GRATE + CONTENTS_AUX
-				tr = util.TraceLine( tr )
-				-- Set the crosshair X+Y where the player is looking in thirdperson, or the center of the screen in first person
-				if (self.Owner == LocalPlayer() && self.Owner:ShouldDrawLocalPlayer()) then
-					local coords = tr.HitPos:ToScreen()
-					x, y = coords.x, coords.y
-				else
-					x, y = ScrW() * .5, ScrH() * .5
-				end
-				
-				local c = GetConVar( "cl_buu_crosshairhealth" ):GetInt()
-				-- Set the crosshair color
-				if c == 0 || c != 1 && !IsValid( tr.Entity ) then
-					r = GetConVar( "cl_buu_crosshairred" ):GetInt()
-					g = GetConVar( "cl_buu_crosshairgreen" ):GetInt()
-					b = GetConVar( "cl_buu_crosshairblue" ):GetInt()
-				else
-					local p = c == 1 && LocalPlayer() || tr.Entity
-					local hp = p:Health()
-					local maxhp = p:GetMaxHealth()
-					if hp <= 0 || maxhp <= 0 then
+					if (self.Sniper) then
+						scale = scale/2
+					end
+					if (!IsValidVariable(self.CrosshairGap)) then
+						finalgap = Lerp(1, finalgap, movementgap*self.CrosshairMove+scale*40+togap+mode.Recoil*15)
+					else
+						finalgap = Lerp(1, finalgap, (movementgap*self.CrosshairMove+scale*10+togap)*self.CrosshairGap)
+					end
+					
+					local tr = util.GetPlayerTrace( self.Owner )
+					tr.mask = CONTENTS_SOLID + CONTENTS_MOVEABLE + CONTENTS_MONSTER + CONTENTS_WINDOW + CONTENTS_DEBRIS + CONTENTS_GRATE + CONTENTS_AUX
+					tr = util.TraceLine( tr )
+					-- Set the crosshair X+Y where the player is looking in thirdperson, or the center of the screen in first person
+					if (self.Owner == LocalPlayer() && self.Owner:ShouldDrawLocalPlayer()) then
+						local coords = tr.HitPos:ToScreen()
+						x, y = coords.x, coords.y
+					else
+						x, y = ScrW() * .5, ScrH() * .5
+					end
+					
+					local c = GetConVar( "cl_buu_crosshairhealth" ):GetInt()
+					-- Set the crosshair color
+					if c == 0 || c != 1 && !IsValid( tr.Entity ) then
 						r = GetConVar( "cl_buu_crosshairred" ):GetInt()
 						g = GetConVar( "cl_buu_crosshairgreen" ):GetInt()
 						b = GetConVar( "cl_buu_crosshairblue" ):GetInt()
 					else
-						r = math.Clamp(255*2-(hp*2/maxhp)*255, 0, 255)
-						g = math.Clamp((hp*2/maxhp)*255, 0, 255)
-						b = 0
+						local p = c == 1 && LocalPlayer() || tr.Entity
+						local hp = p:Health()
+						local maxhp = p:GetMaxHealth()
+						if hp <= 0 || maxhp <= 0 then
+							r = GetConVar( "cl_buu_crosshairred" ):GetInt()
+							g = GetConVar( "cl_buu_crosshairgreen" ):GetInt()
+							b = GetConVar( "cl_buu_crosshairblue" ):GetInt()
+						else
+							r = math.Clamp(255*2-(hp*2/maxhp)*255, 0, 255)
+							g = math.Clamp((hp*2/maxhp)*255, 0, 255)
+							b = 0
+						end
 					end
-				end
-				surface.SetDrawColor(r, g, b, GetConVar("cl_buu_crosshairalpha"):GetInt())
-				
-				if (GetConVar("cl_buu_crosshairstyle"):GetInt() == 2) then
-				
-					-- Draw ZDoom crosshair
-					surface.SetTexture(surface.GetTextureID("scope/xhair_zdoom"))
-					surface.DrawTexturedRect(x-scale/2,y-scale/2,scale,scale)
-				elseif (GetConVar("cl_buu_crosshairstyle"):GetInt() == 3) then
-				
-					-- CSS Crosshair
-					local length = math.max(20 + finalgap, 4)
-					surface.DrawLine(x - length, y, x - finalgap, y) -- Left line
-					surface.DrawLine(x + length, y, x + finalgap, y) -- Right line
-					if (self.CrosshairType != 2) then
-						surface.DrawLine(x-1, y - length, x-1, y - finalgap) -- Top line
-					end
-					surface.DrawLine(x-1, y + length, x-1, y + finalgap) -- Bottom line
-				elseif (GetConVar("cl_buu_crosshairstyle"):GetInt() == 4) then
-				
-					-- Far Cry 3 Crosshair
-					if (self.CrosshairType < 3) then
+					surface.SetDrawColor(r, g, b, GetConVar("cl_buu_crosshairalpha"):GetInt())
 					
-						-- 4 line crosshair
-						surface.SetTexture(surface.GetTextureID("scope/xhair_fc3"))
-						surface.DrawTexturedRectRotated(x,y+finalgap+5, 4, 16, 0)
-						surface.DrawTexturedRectRotated(x+finalgap+5,y, 4, 16, 90)
+					if (GetConVar("cl_buu_crosshairstyle"):GetInt() == 2) then
+					
+						-- Draw ZDoom crosshair
+						surface.SetTexture(surface.GetTextureID("scope/xhair_zdoom"))
+						surface.DrawTexturedRect(x-scale/2,y-scale/2,scale,scale)
+					elseif (GetConVar("cl_buu_crosshairstyle"):GetInt() == 3) then
+					
+						-- CSS Crosshair
+						local length = math.max(20 + finalgap, 4)
+						surface.DrawLine(x - length, y, x - finalgap, y) -- Left line
+						surface.DrawLine(x + length, y, x + finalgap, y) -- Right line
 						if (self.CrosshairType != 2) then
-							surface.DrawTexturedRectRotated(x,y-finalgap-5, 4, 16, 180)
+							surface.DrawLine(x-1, y - length, x-1, y - finalgap) -- Top line
 						end
-						surface.DrawTexturedRectRotated(x-finalgap-5,y, 4, 16, 270)
-					else
+						surface.DrawLine(x-1, y + length, x-1, y + finalgap) -- Bottom line
+					elseif (GetConVar("cl_buu_crosshairstyle"):GetInt() == 4) then
+					
+						-- Far Cry 3 Crosshair
+						if (self.CrosshairType < 3) then
 						
-						-- Circular crosshair
-						local ga = mode.Cone
-						if (IsValidVariable(self.CrosshairGap)) then
-							ga = self.CrosshairGap
+							-- 4 line crosshair
+							surface.SetTexture(surface.GetTextureID("scope/xhair_fc3"))
+							surface.DrawTexturedRectRotated(x,y+finalgap+5, 4, 16, 0)
+							surface.DrawTexturedRectRotated(x+finalgap+5,y, 4, 16, 90)
+							if (self.CrosshairType != 2) then
+								surface.DrawTexturedRectRotated(x,y-finalgap-5, 4, 16, 180)
+							end
+							surface.DrawTexturedRectRotated(x-finalgap-5,y, 4, 16, 270)
+						else
+							
+							-- Circular crosshair
+							local ga = mode.Cone
+							if (IsValidVariable(self.CrosshairGap)) then
+								ga = self.CrosshairGap
+							end
+							surface.DrawCircle(x, y, ga*finalgap*5-1, Color(r*0.61, g*0.61, b*0.61, GetConVar("cl_buu_crosshairalpha"):GetInt()))
+							surface.DrawCircle(x, y, ga*finalgap*5+1, Color(r*0.61, g*0.61, b*0.61, GetConVar("cl_buu_crosshairalpha"):GetInt()))
+							surface.DrawCircle(x, y, ga*finalgap*5, Color(r, g, b, GetConVar("cl_buu_crosshairalpha"):GetInt()))
 						end
-						surface.DrawCircle(x, y, ga*finalgap*5-1, Color(r*0.61, g*0.61, b*0.61, GetConVar("cl_buu_crosshairalpha"):GetInt()))
-						surface.DrawCircle(x, y, ga*finalgap*5+1, Color(r*0.61, g*0.61, b*0.61, GetConVar("cl_buu_crosshairalpha"):GetInt()))
-						surface.DrawCircle(x, y, ga*finalgap*5, Color(r, g, b, GetConVar("cl_buu_crosshairalpha"):GetInt()))
 					end
 				end
+			else
+				self.DrawCrosshair = false
 			end
-		else
-			self.DrawCrosshair = false
 		end
 	end
 
@@ -3132,5 +3136,4 @@ if (CLIENT) then
 		end
 	end
 	hook.Add("PlayerFireAnimationEvent", "Buu_StopThirdpersonSounds", Buu_StopThirdpersonSounds)
-
 end
