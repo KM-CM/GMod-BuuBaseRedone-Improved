@@ -14,19 +14,6 @@ https://github.com/buu342/GMod-BuuBaseRedone
 
 AddCSLuaFile()
 
-//-- SWEP Info
-//SWEP.Author	   = "Buu342"
-//SWEP.Name		 = "Buu Base"
-//SWEP.Contact	  = "buu342@hotmail.com"
-//SWEP.Purpose	  = "To act as a base for my SWEPs"
-//SWEP.Instructions = "Left click to shoot, right click to use sights."
-//SWEP.Category	 = "Buu342"
-//
-//-- Spawning settings
-//SWEP.Spawnable	  = false
-//SWEP.AdminSpawnable = false 
-//SWEP.AdminOnly	  = false
-
 SWEP.Author = "Buu342"
 if CLIENT then language.Add( "weapon_buu_base2", "Buu342's Weapon Base" ) end
 SWEP.PrintName = "#weapon_buu_base2"
@@ -3145,4 +3132,5 @@ if (CLIENT) then
 		end
 	end
 	hook.Add("PlayerFireAnimationEvent", "Buu_StopThirdpersonSounds", Buu_StopThirdpersonSounds)
+
 end
