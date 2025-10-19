@@ -2355,7 +2355,7 @@ if (CLIENT) then
         -- Custom jumping animation
         if (GetConVar("cl_buu_customjump"):GetBool()) then
             if self.Owner:IsOnGround() then self.flAirTime = RealTime() + .01 self.JumpTime = 0 else
-                if CurTime() <= self.flAirTime then
+                if CurTime() <= ( self.flAirTime || 0 ) then
                     if self.JumpTime == 0 then
                         self.JumpTime = ( self.Owner:KeyDown( IN_JUMP ) && self.Owner:KeyDownLast( IN_JUMP ) ) && ( RealTime() + .31 ) || 0
                     end
