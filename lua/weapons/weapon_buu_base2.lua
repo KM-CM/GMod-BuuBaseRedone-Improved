@@ -91,7 +91,7 @@ SWEP.CrosshairGap    = -1 -- The gap to use for the crosshair. -1 to auto genera
 SWEP.CrosshairMove   = 50 -- The movement gap multiplier to use for the crosshair.
 SWEP.CrosshairRecoil = 5  -- The recoil gap multiplier to use for the crosshair.
 
-SWEP.LowAmmoClickSound = Sound "weapons/shotgun/shotgun_empty.wav" // Clicking sound when the current ammo is low ( -1 to not use )
+SWEP.LowAmmoClickSound = Sound "weapons/shotgun/shotgun_empty.wav" // Clicking sound when the current ammo is low (-1 to not use)
 
 // NOTE: This is NOT the clicking on low ammo, this is a separate sound plays when Clip1() hits LowAmmoWarnClip!!!
 SWEP.LowAmmoWarnSound = -1 -- The sound to play to warn us when we're low ammo (-1 to not use) (Make sure to cache it with Sound(""))
@@ -304,6 +304,12 @@ end
 
 KM_CM's Note: I actually don't think this does anything. Calling Sound is already enough to precache it -
 it actually does nothing yet sounds don't work without calling it for some reason. Models work automatically.
+
+Copying the comment part lower, just in case:
+// // From the Garry's Mod wiki
+// // NOTE: Soundcache is limited to 16384 unique sounds on the server.
+// // BUG: Broken on purpose because hitting the limit above causes the server to shutdown
+// // BUG: Ultimately does nothing on client, and only works with sound scripts, not direct paths.
 -----------------------------*/
 
 // local util_PrecacheModel = util.PrecacheModel
@@ -360,10 +366,10 @@ it actually does nothing yet sounds don't work without calling it for some reaso
 //     // util_PrecacheSound "buu/base/ironsight_rifle3.wav"
 //     // util_PrecacheSound "buu/base/ironsight_rifle4.wav"
 //     // util_PrecacheSound "buu/base/ironsight_rifle5.wav"
-//     // util_PrecacheSound "buu/base/breathe_in1.wav")
-//     // util_PrecacheSound "buu/base/breathe_in2.wav")
-//     // util_PrecacheSound "buu/base/breathe_out1.wav")
-//     // util_PrecacheSound "buu/base/breathe_out2.wav")
+//     // util_PrecacheSound "buu/base/breathe_in1.wav"
+//     // util_PrecacheSound "buu/base/breathe_in2.wav"
+//     // util_PrecacheSound "buu/base/breathe_out1.wav"
+//     // util_PrecacheSound "buu/base/breathe_out2.wav"
 // end
 
 
@@ -2213,10 +2219,16 @@ if (CLIENT) then
     local maxroll = 30 -- How much to roll the gun when going into ironsights
     local vmfov = nil
     local vmfov_t = nil
+    local flLastManipulateViewModelCall = 0
+    local math_min = math.min
     SWEP.flIronSightSwayMultiplier = 1 // How much sway do we currently have?
     SWEP.flIronSightSwayMultiplierTarget = 0 // How much sway do we have when ironsighting?
     function SWEP:ManipulateViewModel(pos, ang)
         if !IsValid(self.Owner) then return end
+        
+        local f = CurTime()
+        local flFrameTime = f - flLastManipulateViewModelCall
+        flLastManipulateViewModelCall = f
         
         local ply = LocalPlayer()
         local weapon = ply:GetActiveWeapon()
@@ -2243,9 +2255,9 @@ if (CLIENT) then
                   Animation Transition Speed 
         --------------------------------------------*/
         
-        -- Decide the animation speed based on what the player is currently doing
-        local animspeed = 5
         // Too sharp!
+        -- Decide the animation speed based on what the player is currently doing
+        // local animspeed = 5
         //    if (self.LandTime > RealTime() && !(self.Owner:KeyDown(IN_SPEED) && self.Owner:IsOnGround())) then
         //        animspeed = 20
         //    elseif (IsValid(self.Owner) && !self.Owner:KeyDown(IN_SPEED) && !(self.Owner:KeyDown(IN_DUCK) && walkspeed > 40)) then
@@ -2259,9 +2271,10 @@ if (CLIENT) then
         //    end
         
         -- Smoothly transition the vectors with the target values
-        FinalVector = LerpVector(animspeed*FrameTime(), FinalVector, TargetVector) 
-        FinalVectorAngle = LerpVector(animspeed*FrameTime(), FinalVectorAngle, TargetVectorAngle) 
-        self.ViewModelFOV = Lerp(animspeed*FrameTime(), self.ViewModelFOV, vmfov_t)
+        local flLerpSpeed = math_min( 1, 5 * flFrameTime )
+        FinalVector = LerpVector( flLerpSpeed, FinalVector, TargetVector ) 
+        FinalVectorAngle = LerpVector( flLerpSpeed, FinalVectorAngle, TargetVectorAngle ) 
+        self.ViewModelFOV = Lerp( flLerpSpeed, self.ViewModelFOV, vmfov_t )
         
         -- Change the angles and positions with the new vectors
         ang:RotateAroundAxis(ang:Right(), FinalVectorAngle.x)
@@ -2295,7 +2308,7 @@ if (CLIENT) then
             end
             
             -- Calculate the time to perform the rolling animation
-            ironsighttime = Lerp(10*FrameTime(), ironsighttime+1, maxroll)
+            ironsighttime = Lerp(10*flFrameTime, ironsighttime+1, maxroll)
             if (GetConVar("cl_buu_ironsightrolling"):GetBool() && self.IronsightRoll) then
                 targettime = (-(ironsighttime-(maxroll/2))^2 + (maxroll/2)^2)/(maxroll/2) -- Parabolas! Thank you https://www.desmos.com for some nice visuals.
             end
@@ -2471,23 +2484,23 @@ if (CLIENT) then
         
         -- Handle viewmodel swaying
         if GetConVar( "cl_buu_customsway" ):GetBool() then
-            Current_Aim = LerpAngle( 5 * FrameTime(), Current_Aim, ply:EyeAngles() )
+            Current_Aim = LerpAngle( flLerpSpeed, Current_Aim, ply:EyeAngles() )
             self.LastEyePosition = self.BuuBase_EyePosition
             self.BuuBase_EyePosition = Current_Aim - ply:EyeAngles()
             self.BuuBase_EyePosition.y = math.AngleDifference( Current_Aim.y, math.NormalizeAngle( ply:EyeAngles().y ) )
             // Sway less ( or don't ) when ironsighting
             local flMultiplier = 1
             if self.Owner:KeyDown( IN_ATTACK2 ) then
-                flMultiplier = math.Approach( self.flIronSightSwayMultiplier, self.flIronSightSwayMultiplierTarget, 10 * FrameTime() )
+                flMultiplier = math.Approach( self.flIronSightSwayMultiplier, self.flIronSightSwayMultiplierTarget, 10 * flFrameTime )
                 self.flIronSightSwayMultiplier = flMultiplier
             else
-                flMultiplier = math.Approach( self.flIronSightSwayMultiplier, 1, 10 * FrameTime() )
+                flMultiplier = math.Approach( self.flIronSightSwayMultiplier, 1, 10 * flFrameTime )
                 self.flIronSightSwayMultiplier = flMultiplier
             end
             local flSwayAngle = 4 * self.BuuSwayScale * flMultiplier
             local flSwayAngleNeg = -flSwayAngle
             local eye = self.Owner:EyeAngles()
-            self.flLastEyeYaw = Lerp( 5 * FrameTime(), math.Clamp( ( self.flLastEyeYaw || 0 ) + math.AngleDifference( eye[ 2 ], ( self.flLastTrueEyeYaw || eye[ 2 ] ) ), flSwayAngleNeg, flSwayAngle ), 0 )
+            self.flLastEyeYaw = Lerp( flLerpSpeed, math.Clamp( ( self.flLastEyeYaw || 0 ) + math.AngleDifference( eye[ 2 ], ( self.flLastTrueEyeYaw || eye[ 2 ] ) ), flSwayAngleNeg, flSwayAngle ), 0 )
             self.flLastTrueEyeYaw = eye[ 2 ]
             ang:RotateAroundAxis( ang:Right(), math.Clamp( 4 * self.BuuBase_EyePosition.p / self.BuuSwayScale, -4, 4 ) * flMultiplier )
             local f = -self.flLastEyeYaw
@@ -2932,7 +2945,11 @@ if (CLIENT) then
     local togap = 0
     local finalgap = 0
     local lastfirehud = 0
+    local flLastDrawHUDCall = 0
     function SWEP:DrawHUD()
+        local f = CurTime()
+        local flFrameTime = f - flLastDrawHUDCall
+        flLastDrawHUDCall = f
     
         -- Draw the sniper scope in using it, or the crosshair if not
         if (self:IsScoped()) then
@@ -2978,7 +2995,9 @@ if (CLIENT) then
                         togap = togap + 10+mode.Recoil*self.CrosshairRecoil
                         lastfirehud = self:GetBuu_FireTime()
                     end
-                    togap = Lerp(0.04, togap, 0)
+                    togap = Lerp( math_min( 1, 2.6 * flFrameTime ), togap, 0)
+                    // What? Buu, WHY?
+                    // togap = Lerp(0.04, togap, 0)
                 end
                 if (self.Sniper) then
                     scale = scale/2
