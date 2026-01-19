@@ -2226,7 +2226,7 @@ if (CLIENT) then
     function SWEP:ManipulateViewModel(pos, ang)
         if !IsValid(self.Owner) then return end
         
-        local f = CurTime()
+        local f = SysTime()
         local flFrameTime = f - flLastManipulateViewModelCall
         flLastManipulateViewModelCall = f
         
@@ -2947,7 +2947,7 @@ if (CLIENT) then
     local lastfirehud = 0
     local flLastDrawHUDCall = 0
     function SWEP:DrawHUD()
-        local f = CurTime()
+        local f = SysTime()
         local flFrameTime = f - flLastDrawHUDCall
         flLastDrawHUDCall = f
     
